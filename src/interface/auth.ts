@@ -1,21 +1,16 @@
 // import Image from "./image";
 
-interface Auth {
+interface User {
+  _id: string;
+  name: string;
   email: string;
-  password: string;
 }
 
-interface AuthenticationValues {
-  email: string;
-  password: string;
-}
-
-interface AuthStore {
-  user: Auth | null;
+interface AuthenticationState {
+  user: User | null;
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
-
-export type { Auth, AuthStore, AuthenticationValues };
+export type { User, AuthenticationState };

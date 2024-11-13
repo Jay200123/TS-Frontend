@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const MainLayout: React.FC = () => {
   return (
-    <main className="flex flex-col items-center justify-between">
+    <main className="flex flex-col items-center justify-between h-screen w-screen">
       <Navbar />
       <div className="p-3">
         <ToastContainer />

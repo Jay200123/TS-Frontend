@@ -16,7 +16,13 @@ const useAccessoriesStore = create<AccessoryState>((set) => ({
     const res = await axios.get<AccessoryAPI>(
       "http://localhost:4000/api/v1/accessories"
     );
-    set({ accessories: res.data.details, loading: false, error: null });
+    set(
+      { 
+         accessories: res.data.details,
+         loading: false,
+         error: null
+        }
+      );
   },
 
   getAccessoryById: async (id: string) => {

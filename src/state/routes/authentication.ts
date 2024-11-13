@@ -1,42 +1,45 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import axios from "axios";
+import { AuthenticationState } from "../../interface";
+import { encryptedSessionStorage } from "../../storage";
 
-interface User {
-  _id: string;
-  name: string;
-  password: string;
-}
+const useAuthenticationStore = create<AuthenticationState>()(
+  persist(
+    (set) => ({
+      user: null,
+      loading: false,
+      error: null,
 
-interface AuthenticationState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  login: (name: string, password: string) => Promise<void>;
-  logout: () => void;
-}
+      login: async (email, password) => {
+        const res = await axios.post("http://localhost:4000/api/v1/login", {
+          email,
+          password,
+        },);
+        set(
+          {
+            user: res.data.details,
+            loading: false,
+            error: null
+          }
+        );
+      },
 
-interface AuthenticationAPI {
-  message: string;
-  details: User;
-  success: boolean;
-  access: string;
-}
+      logout: () => {
+        set(
+          {
+            user: null,
+          }
+        );
+        localStorage.removeItem("user-auth");
+        sessionStorage.removeItem("user-auth");
+      },
+    }),
+    {
+      name: "user-auth",
+      storage: encryptedSessionStorage,
+    }
+  )
+);
 
-const useAuthenticationStore = create<AuthenticationState>((set) => ({
-  user: null,
-  loading: false,
-  error: null,
-
-  login: async (email, password) => {
-    const res = await axios.post<AuthenticationAPI>(
-      "http://localhost:4000/api/v1/login",
-      { email, password },
-      { withCredentials: true }
-    );
-    set({user: res.data.details, loading: false, error: null}); 
-    localStorage.setItem("token", res.data.access);
-  },
-  logout: () => {},
-}));
-
-export { useAuthenticationStore}
+export { useAuthenticationStore };
